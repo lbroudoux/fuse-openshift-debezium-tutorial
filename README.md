@@ -89,8 +89,8 @@ Here's the description of the 3 routes :
 </route>
 
 <route id="products-cdc" streamCache="true">
-   <from id="from-products" uri="kafka:kafka:9092?topic=dbserver1.inventory.customers&amp;groupId=2"/>
-   <log id="log-products" message="Customer change event: ${body}"/>
+   <from id="from-products" uri="kafka:kafka:9092?topic=dbserver1.inventory.products&amp;groupId=2"/>
+   <log id="log-products" message="Product change event: ${body}"/>
 </route>
 ```
 
