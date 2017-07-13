@@ -1,0 +1,887 @@
+{
+    "kind": "List",
+    "apiVersion": "v1",
+    "metadata": {},
+    "items": [
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "connect",
+                "generation": 1,
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "connect"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftWebConsole"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Rolling",
+                    "rollingParams": {
+                        "updatePeriodSeconds": 1,
+                        "intervalSeconds": 1,
+                        "timeoutSeconds": 600,
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    },
+                    "resources": {},
+                    "activeDeadlineSeconds": 21600
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "connect"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "namespace": "debezium",
+                                "name": "connect:0.5"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "test": false,
+                "selector": {
+                    "app": "connect",
+                    "deploymentconfig": "connect"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "connect",
+                            "deploymentconfig": "connect"
+                        },
+                        "annotations": {
+                            "openshift.io/generated-by": "OpenShiftWebConsole"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "connect-1",
+                                "emptyDir": {}
+                            },
+                            {
+                                "name": "connect-2",
+                                "emptyDir": {}
+                            },
+                            {
+                                "name": "connect-3",
+                                "emptyDir": {}
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "connect",
+                                "image": "debezium/connect@sha256:6782b434e309bb060eb4b1c744b9a957aa98098df610820dfd9f997fdd216da6",
+                                "ports": [
+                                    {
+                                        "containerPort": 8083,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 8778,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 9092,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 9779,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "GROUP_ID",
+                                        "value": "1"
+                                    },
+                                    {
+                                        "name": "CONFIG_STORAGE_TOPIC",
+                                        "value": "my_connect_configs"
+                                    },
+                                    {
+                                        "name": "OFFSET_STORAGE_TOPIC",
+                                        "value": "my_connect_offsets"
+                                    },
+                                    {
+                                        "name": "BOOTSTRAP_SERVERS",
+                                        "value": "kafka:9092"
+                                    },
+                                    {
+                                        "name": "ADVERTISED_HOST_NAME",
+                                        "value": "connect"
+                                    },
+                                    {
+                                        "name": "ADVERTISED_PORT",
+                                        "value": "9092"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {}
+                    }
+                }
+            },
+            "status": {
+                "latestVersion": 0,
+                "observedGeneration": 0,
+                "replicas": 0,
+                "updatedReplicas": 0,
+                "availableReplicas": 0,
+                "unavailableReplicas": 0
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "kafka",
+                "generation": 1,
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "kafka"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftWebConsole"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Rolling",
+                    "rollingParams": {
+                        "updatePeriodSeconds": 1,
+                        "intervalSeconds": 1,
+                        "timeoutSeconds": 600,
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    },
+                    "resources": {},
+                    "activeDeadlineSeconds": 21600
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "kafka"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "namespace": "debezium",
+                                "name": "kafka:0.5"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "test": false,
+                "selector": {
+                    "app": "kafka",
+                    "deploymentconfig": "kafka"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "kafka",
+                            "deploymentconfig": "kafka"
+                        },
+                        "annotations": {
+                            "openshift.io/generated-by": "OpenShiftWebConsole"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "kafka-1",
+                                "emptyDir": {}
+                            },
+                            {
+                                "name": "kafka-2",
+                                "emptyDir": {}
+                            },
+                            {
+                                "name": "kafka-3",
+                                "emptyDir": {}
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "kafka",
+                                "image": "debezium/kafka@sha256:2c0ea2988ff14a10f59baff1e4a3ac4c9ac912a94964a8478679bc36f8dc740a",
+                                "ports": [
+                                    {
+                                        "containerPort": 8778,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 9092,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 9779,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "KAFKA_ADVERTISED_HOSTNAME",
+                                        "value": "kafka"
+                                    },
+                                    {
+                                        "name": "ZOOKEEPER_CONNECT",
+                                        "value": "zookeeper:2181"
+                                    },
+                                    {
+                                        "name": "KAFKA_ADVERTISED_HOST_PORT",
+                                        "value": "9092"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {}
+                    }
+                }
+            },
+            "status": {
+                "latestVersion": 0,
+                "observedGeneration": 0,
+                "replicas": 0,
+                "updatedReplicas": 0,
+                "availableReplicas": 0,
+                "unavailableReplicas": 0
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "mysql",
+                "generation": 1,
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "mysql"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftWebConsole"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Rolling",
+                    "rollingParams": {
+                        "updatePeriodSeconds": 1,
+                        "intervalSeconds": 1,
+                        "timeoutSeconds": 600,
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    },
+                    "resources": {},
+                    "activeDeadlineSeconds": 21600
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "mysql"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "namespace": "debezium",
+                                "name": "mysql:0.5"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "test": false,
+                "selector": {
+                    "app": "mysql",
+                    "deploymentconfig": "mysql"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "mysql",
+                            "deploymentconfig": "mysql"
+                        },
+                        "annotations": {
+                            "openshift.io/generated-by": "OpenShiftWebConsole"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "mysql-1",
+                                "emptyDir": {}
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "mysql",
+                                "image": "debezium/example-mysql@sha256:122286d3c5d478c6d3dce3e0150ed6d91037f03114d4df679e3758b84a9b89a5",
+                                "ports": [
+                                    {
+                                        "containerPort": 3306,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "MYSQL_ROOT_PASSWORD",
+                                        "value": "debezium"
+                                    },
+                                    {
+                                        "name": "MYSQL_USER",
+                                        "value": "mysqluser"
+                                    },
+                                    {
+                                        "name": "MYSQL_PASSWORD",
+                                        "value": "mysqlpw"
+                                    }
+                                ],
+                                "resources": {},
+                                "volumeMounts": [
+                                    {
+                                        "name": "mysql-1",
+                                        "mountPath": "/var/lib/mysql"
+                                    }
+                                ],
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {}
+                    }
+                }
+            },
+            "status": {
+                "latestVersion": 0,
+                "observedGeneration": 0,
+                "replicas": 0,
+                "updatedReplicas": 0,
+                "availableReplicas": 0,
+                "unavailableReplicas": 0
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "watcher",
+                "generation": 1,
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "watcher"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftWebConsole"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Rolling",
+                    "rollingParams": {
+                        "updatePeriodSeconds": 1,
+                        "intervalSeconds": 1,
+                        "timeoutSeconds": 600,
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    },
+                    "resources": {},
+                    "activeDeadlineSeconds": 21600
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "watcher"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "namespace": "debezium",
+                                "name": "watcher:0.5"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "test": false,
+                "selector": {
+                    "app": "watcher",
+                    "deploymentconfig": "watcher"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "watcher",
+                            "deploymentconfig": "watcher"
+                        },
+                        "annotations": {
+                            "openshift.io/generated-by": "OpenShiftWebConsole"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "watcher-1",
+                                "emptyDir": {}
+                            },
+                            {
+                                "name": "watcher-2",
+                                "emptyDir": {}
+                            },
+                            {
+                                "name": "watcher-3",
+                                "emptyDir": {}
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "watcher",
+                                "image": "debezium/kafka@sha256:2c0ea2988ff14a10f59baff1e4a3ac4c9ac912a94964a8478679bc36f8dc740a",
+                                "command": [
+                                    "/docker-entrypoint.sh",
+                                    "watch-topic",
+                                    "-a",
+                                    "-k",
+                                    "dbserver1.inventory.customers"
+                                ],
+                                "ports": [
+                                    {
+                                        "containerPort": 8778,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 9092,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 9779,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "ZOOKEEPER_CONNECT",
+                                        "value": "zookeeper:2181"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {}
+                    }
+                }
+            },
+            "status": {
+                "latestVersion": 0,
+                "observedGeneration": 0,
+                "replicas": 0,
+                "updatedReplicas": 0,
+                "availableReplicas": 0,
+                "unavailableReplicas": 0
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "zookeeper",
+                "generation": 1,
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "zookeeper"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftWebConsole"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Rolling",
+                    "rollingParams": {
+                        "updatePeriodSeconds": 1,
+                        "intervalSeconds": 1,
+                        "timeoutSeconds": 600,
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    },
+                    "resources": {},
+                    "activeDeadlineSeconds": 21600
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "zookeeper"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "namespace": "debezium",
+                                "name": "zookeeper:0.5"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "test": false,
+                "selector": {
+                    "app": "zookeeper",
+                    "deploymentconfig": "zookeeper"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "zookeeper",
+                            "deploymentconfig": "zookeeper"
+                        },
+                        "annotations": {
+                            "openshift.io/generated-by": "OpenShiftWebConsole"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "zookeeper-1",
+                                "emptyDir": {}
+                            },
+                            {
+                                "name": "zookeeper-2",
+                                "emptyDir": {}
+                            },
+                            {
+                                "name": "zookeeper-3",
+                                "emptyDir": {}
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "zookeeper",
+                                "image": "debezium/zookeeper@sha256:77bda73a81f22139fdebf7fd0f34753f1df5d138feefd565f3c844f566264b49",
+                                "ports": [
+                                    {
+                                        "containerPort": 2181,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 2888,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 3888,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 8778,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 9779,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {}
+                    }
+                }
+            },
+            "status": {
+                "latestVersion": 0,
+                "observedGeneration": 0,
+                "replicas": 0,
+                "updatedReplicas": 0,
+                "availableReplicas": 0,
+                "unavailableReplicas": 0
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "connect",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "connect"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftWebConsole"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "8083-tcp",
+                        "protocol": "TCP",
+                        "port": 8083,
+                        "targetPort": 8083
+                    },
+                    {
+                        "name": "8778-tcp",
+                        "protocol": "TCP",
+                        "port": 8778,
+                        "targetPort": 8778
+                    },
+                    {
+                        "name": "9092-tcp",
+                        "protocol": "TCP",
+                        "port": 9092,
+                        "targetPort": 9092
+                    },
+                    {
+                        "name": "9779-tcp",
+                        "protocol": "TCP",
+                        "port": 9779,
+                        "targetPort": 9779
+                    }
+                ],
+                "selector": {
+                    "deploymentconfig": "connect"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "kafka",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "kafka"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftWebConsole"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "8778-tcp",
+                        "protocol": "TCP",
+                        "port": 8778,
+                        "targetPort": 8778
+                    },
+                    {
+                        "name": "9092-tcp",
+                        "protocol": "TCP",
+                        "port": 9092,
+                        "targetPort": 9092
+                    },
+                    {
+                        "name": "9779-tcp",
+                        "protocol": "TCP",
+                        "port": 9779,
+                        "targetPort": 9779
+                    }
+                ],
+                "selector": {
+                    "deploymentconfig": "kafka"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "mysql",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "mysql"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftWebConsole"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "3306-tcp",
+                        "protocol": "TCP",
+                        "port": 3306,
+                        "targetPort": 3306
+                    }
+                ],
+                "selector": {
+                    "deploymentconfig": "mysql"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "watcher",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "watcher"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftWebConsole"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "8778-tcp",
+                        "protocol": "TCP",
+                        "port": 8778,
+                        "targetPort": 8778
+                    },
+                    {
+                        "name": "9092-tcp",
+                        "protocol": "TCP",
+                        "port": 9092,
+                        "targetPort": 9092
+                    },
+                    {
+                        "name": "9779-tcp",
+                        "protocol": "TCP",
+                        "port": 9779,
+                        "targetPort": 9779
+                    }
+                ],
+                "selector": {
+                    "deploymentconfig": "watcher"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "zookeeper",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "zookeeper"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftWebConsole"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "2181-tcp",
+                        "protocol": "TCP",
+                        "port": 2181,
+                        "targetPort": 2181
+                    },
+                    {
+                        "name": "2888-tcp",
+                        "protocol": "TCP",
+                        "port": 2888,
+                        "targetPort": 2888
+                    },
+                    {
+                        "name": "3888-tcp",
+                        "protocol": "TCP",
+                        "port": 3888,
+                        "targetPort": 3888
+                    },
+                    {
+                        "name": "8778-tcp",
+                        "protocol": "TCP",
+                        "port": 8778,
+                        "targetPort": 8778
+                    },
+                    {
+                        "name": "9779-tcp",
+                        "protocol": "TCP",
+                        "port": 9779,
+                        "targetPort": 9779
+                    }
+                ],
+                "selector": {
+                    "deploymentconfig": "zookeeper"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        }
+    ]
+}

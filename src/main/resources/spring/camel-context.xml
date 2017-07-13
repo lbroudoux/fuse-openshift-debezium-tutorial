@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
+   <!-- Camel Routes -->
+   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+      <route id="customers-cdc" streamCache="true">
+         <from id="from-customers" uri="kafka:kafka:9092?topic=dbserver1.inventory.customers&amp;groupId=2"/>
+         <log id="log-customers" message="Customer change event: ${body}"/>
+      </route>
+      
+      <route id="orders-cdc" streamCache="true">
+         <from id="from-orders" uri="kafka:kafka:9092?topic=dbserver1.inventory.orders&amp;groupId=2"/>
+         <log id="log-orders" message="Order change event: ${body}"/>
+      </route>
+      
+      <route id="products-cdc" streamCache="true">
+         <from id="from-products" uri="kafka:kafka:9092?topic=dbserver1.inventory.customers&amp;groupId=2"/>
+         <log id="log-products" message="Customer change event: ${body}"/>
+      </route>
+   </camelContext>
+</beans>
