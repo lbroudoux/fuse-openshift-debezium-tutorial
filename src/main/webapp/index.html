@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  	<title>JBoss Fuse Debezium CDC Demo</title>
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/main.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-menu">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">
+            <h1 class="logo">
+              <img alt="Brand" src="images/kafka-logo.png" height="42" width="42"/>
+            </h1>
+          </a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav" style="padding-left: 50px">
+            <li><h3 style="width: 360px">JBoss Fuse Debezium CDC Demo</h3></li>
+          </ul>
+          <div class="navbar-form navbar-right" role="search" style="padding-top: 5px">
+            <div class="form-group">
+              <input id="dbz_tutorial_route" type="text" class="form-control" placeholder="DBZ_TUTORIAL_ROUTE">
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <div class="jumbotron">
+        <h2>Hello JBoss Fuse with Kafka & Debezium</h2>
+    	  <p>This demo demonstrates how JBoss Fuse can consume Change Data Capture events on Kafka</p>
+    	</div>
+      <div class="row">
+        <div class="col-md-10">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Events</h3>
+            </div>
+            <div class="panel-body">
+			  <div id="eventMsgDiv">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Clear</h3>
+            </div>
+            <div class="panel-body">
+              <p class="text-right"><button id="clearEvents" type="button" class="btn btn-default">Clear</button></p>
+            </div>
+          </div>
+      </div>
+    </div>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+    var DBZ_TUTORIAL_ROUTE = "dbz-tutorial-strimzi.apps.laurent.openhybridcloud.io";
+    var MAX_ESB_MSG_DISPLAY = 12;
+    var MAX_CONSOLE_LINE_DISPLAY = 12;
+
+    var esbmsgsocket = null;
+    var eventMsgArray = [];
+    var errorMsgArray = [];
+
+    $("#dbz_tutorial_route").blur(function(){
+      var value = $("#dbz_tutorial_route").val();
+      if (value === null || value === "") {
+        $("#dbz_tutorial_route").val(DBZ_TUTORIAL_ROUTE);
+      } else {
+    	  DBZ_TUTORIAL_ROUTE = value;
+      }
+    });
+   
+    $("#clearEvents").click(function(){
+      eventMsgArray = [];
+      $('#eventMsgDiv').html("");
+    });
+    
+    $(document).ready(function() {
+      if (!("WebSocket" in window)){
+    		$('#chatLog, input, button, #examples').fadeOut("fast");
+    		$('<p>Oh no, you need a browser that supports WebSockets. How about <a href="http://www.google.com/chrome">Google Chrome</a>?</p>').appendTo('#container');
+    	} else {
+        connectEvents();
+      }
+    });
+
+    function connectEvents() {
+      try {
+        esbmsgsocket = new WebSocket("ws://"+DBZ_TUTORIAL_ROUTE+"/events");
+  			esbmsgsocket.onopen = function(){console.log('Starting getting event-bus messages ......');}
+
+  			esbmsgsocket.onmessage = function(msg){
+  				eventMsgArray.push(createEventMsg(msg.data));
+  				if (eventMsgArray.length > MAX_ESB_MSG_DISPLAY){
+  					eventMsgArray.shift();
+  				}
+  				var msgContent = "";
+  				for (i = 0; i < eventMsgArray.length; i++) {
+  					msgContent += eventMsgArray[i];
+  				}
+  				$('#eventMsgDiv').html(msgContent);
+  			}
+  			esbmsgsocket.onclose = function(){console.log('Stop getting event-bus messages');}
+      } catch (exception) {
+
+      }
+    }
+
+    function message(consoleArray, msg){
+      consoleArray.push(msg);
+      if (consoleArray.length > MAX_CONSOLE_LINE_DISPLAY){
+        consoleArray.shift();
+      }
+      var msgContent = "";
+      for (i = 0; i < consoleArray.length; i++) {
+        msgContent += consoleArray[i];
+      }
+      return msgContent;
+    }
+
+    function createEventMsg(msg){
+      var msgContent = '<div class="alert alert-dismissible ';
+      if (msg.indexOf('inventory.customers') != -1) {
+        msgContent += ' alert-info"><button type="button" class="close" data-dismiss="alert">&times;</button>';
+        msgContent += '<h4>Customer change event</h4>'
+      } else if (msg.indexOf('inventory.products') != -1) {
+        msgContent += ' alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button>';
+        msgContent += '<h4>Product change event</h4>'
+      } else if (msg.indexOf('inventory.orders') != -1) {
+        msgContent += ' alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>';
+        msgContent += '<h4>Order change event</h4>'
+      }
+      
+	  msg = JSON.parse(msg);
+      if (msg.payload.op === 'u') {
+    	msgContent += '<p><h5>Update at ' + msg.payload.ts_ms + '</h5></p>';
+      }
+      if (msg.payload.op === 'c') {
+    	msgContent += '<p><h5>Creation at ' + msg.payload.ts_ms + '</h5></p>';
+      }
+      if (msg.payload.op === 'd') {
+    	msgContent += '<p><h5>Deletion at ' + msg.payload.ts_ms + '</h5></p>';
+      }
+      msgContent += '<p><h5>Before</h5> <code>' + JSON.stringify(msg.payload.before) + '</code></p>';
+      msgContent += '<p><h5>After</h5> <code>' + JSON.stringify(msg.payload.after) + '</code></p>';
+      msgContent += '<p><h5>Source</h5> <code>' + JSON.stringify(msg.payload.source) + '</code></p>';
+      msgContent += '</div>';
+      return msgContent;
+    }
+
+    </script>
+  </body>
+</html>
